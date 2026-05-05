@@ -1,0 +1,20 @@
+name: OpenVela CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  openvela:
+    uses: szafonimateusz-mi/openvela-docker/.github/workflows/openvela-repo-ci.yml@main
+    with:
+      image: ghcr.io/szafonimateusz-mi/openvela-dev:latest
+      repo-path: nuttx
+      max-targets: "1"
+      jobs: "4"
