@@ -1,0 +1,87 @@
+name: OpenVela CI
+
+on:
+  pull_request:
+  push:
+    branches: [dev, main]
+  workflow_dispatch:
+    inputs:
+      suite:
+        description: OpenVela CI suite to run.
+        required: true
+        default: full
+        type: choice
+        options:
+          - quick
+          - full
+          - ntfc
+      max-targets:
+        description: Maximum targets per testlist. Use 0 for all targets.
+        required: true
+        default: "0"
+        type: string
+      jobs:
+        description: Build parallelism.
+        required: true
+        default: "4"
+        type: string
+
+permissions:
+  contents: read
+  packages: read
+
+jobs:
+  quick:
+    if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'quick' }}
+    uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
+    with:
+      image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
+      ci-assets-repository: szafonimateusz-mi/public-actions
+      ci-assets-ref: trunk
+      manifest-branch: dev
+      repo-path: nuttx
+      testlist: /opt/openvela-ci/testlists/quick.dat
+      max-targets: "1"
+      jobs: "4"
+      artifact-name: openvela-ci-quick
+
+  full:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'full' }}
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: arm
+            testlist: /opt/openvela-ci/testlists/openvela-nuttx-arm.dat
+          - name: arm64
+            testlist: /opt/openvela-ci/testlists/openvela-nuttx-arm64.dat
+          - name: x86_64
+            testlist: /opt/openvela-ci/testlists/openvela-nuttx-x86_64.dat
+    name: full-${{ matrix.name }}
+    uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
+    with:
+      image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
+      ci-assets-repository: szafonimateusz-mi/public-actions
+      ci-assets-ref: trunk
+      manifest-branch: dev
+      repo-path: nuttx
+      testlist: ${{ matrix.testlist }}
+      max-targets: ${{ inputs.max-targets }}
+      jobs: ${{ inputs.jobs }}
+      artifact-name: openvela-ci-full-${{ matrix.name }}
+
+  ntfc:
+    if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'ntfc' }}
+    uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
+    with:
+      image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
+      ci-assets-repository: szafonimateusz-mi/public-actions
+      ci-assets-ref: trunk
+      manifest-branch: dev
+      repo-path: nuttx
+      testlist: /opt/openvela-ci/testlists/openvela-nuttx-ntfc.dat
+      max-targets: ${{ inputs.max-targets }}
+      jobs: ${{ inputs.jobs }}
+      run-runtime-tests: true
+      require-runtime-tests: true
+      artifact-name: openvela-ci-ntfc
