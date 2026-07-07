@@ -83,7 +83,11 @@ function configure {
 
 function build {
   echo "  Building with OpenVela build.sh..."
-  local args=("${config%/}")
+  local target="${config%/}"
+  if [[ "$target" != vendor/* ]]; then
+    target="${target/\//:}"
+  fi
+  local args=("$target")
   if [ ! -z ${cmake} ]; then
     args+=(--cmake)
   fi
@@ -107,9 +111,18 @@ function refresh {
 
 function run {
   if [ ${RUN} -ne 0 ] && [ -z ${cmake} ]; then
-    run_script="$path/run"
-    if [ -x $run_script ]; then
+    run_script=""
+    for candidate in "$path/run.sh" "$path/run"; do
+      if [ -x $candidate ]; then
+        run_script=$candidate
+        break
+      fi
+    done
+    if [ ! -z "$run_script" ]; then
       echo "  Running NuttX..."
+      export CURRENTCONFDIR=$(cd $path && pwd)
+      export ARTIFACTCONFDIR=$ARTIFACTDIR/$(echo $config | sed "s/:/\//")
+      mkdir -p $ARTIFACTCONFDIR
       if ! $run_script; then
         fail=1
       fi
