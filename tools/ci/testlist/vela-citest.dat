@@ -1,0 +1,7 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# OpenVela/NuttX runtime-test group (Make flow; run with -R).
+# boards/sim/sim/sim/configs/citest carries NTFC config.yaml/session.json
+# and an executable run script.
+
+sim:citest
