@@ -64,3 +64,10 @@ CMake,sim:vncserver
 
 # undefined reference to `NXlink'
 -sim:toywasm
+
+# rustc not available in the openvela-ci-linux image
+-Linux,sim:rust
+
+# gcc-multilib/libc6-dev-i386 not installed in the openvela-ci-linux image
+# (-m32 build: "bits/wordsize.h: No such file or directory")
+-Linux,sim:sotest32

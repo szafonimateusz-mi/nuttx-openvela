@@ -4,3 +4,10 @@
 
 # error: missing binary operator before token
 -qemu-intel64:earlyfb
+
+# Two board directories are both named qemu-intel64
+# (boards/x86_64/intel64/qemu-intel64 and boards/x86_64/qemu/qemu-intel64);
+# the board:config glob cannot disambiguate their overlapping lvgl/fb
+# configs. Blacklist until the duplicate board name is resolved in-tree.
+-Linux,qemu-intel64:lvgl
+-Linux,qemu-intel64:fb

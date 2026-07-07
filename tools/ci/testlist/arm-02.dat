@@ -19,3 +19,9 @@ CMake,sabre-6quad:nsh
 
 # error: missing argument to '-Wstack-usage='
 -sabre-6quad:libcxx
+
+# Defconfig selects CONFIG_ARM_TOOLCHAIN_BUILDROOT_OABI (arm-nuttx-elf-gcc);
+# no such prebuilt in the OpenVela manifest and the vela plugin does not
+# apply the testlist's GNU_EABI toolchain override (known limitation).
+-Linux,twr-k60n512:nsh
+-Linux,kwikstik-k40:ostest

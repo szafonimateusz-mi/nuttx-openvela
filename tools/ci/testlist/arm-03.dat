@@ -10,3 +10,20 @@
 
 # error: missing argument to '-Wstack-usage='
 -lincoln60:thttpd-binfs
+
+# Defconfig selects CONFIG_ARM_TOOLCHAIN_BUILDROOT/_OABI
+# (arm-nuttx-eabi-gcc / arm-nuttx-elf-gcc); no such prebuilts in the
+# OpenVela manifest and the vela plugin does not apply the testlist's
+# GNU_EABI toolchain override (known limitation).
+-Linux,mcb1700:nsh
+-Linux,olimex-lpc1766stk:nettest
+-Linux,olimex-lpc1766stk:nsh
+-Linux,olimex-lpc1766stk:usbmsc
+-Linux,olimex-lpc1766stk:usbserial
+-Linux,olimex-lpc1766stk:zmodem
+-Linux,open1788:nsh
+-Linux,zkit-arm-1769:hello
+-Linux,zkit-arm-1769:nsh
+-Linux,zkit-arm-1769:nxhello
+-Linux,lpc4088-devkit:nsh
+-Linux,lpc4088-quickstart:nsh

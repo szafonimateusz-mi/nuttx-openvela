@@ -97,7 +97,11 @@ function build {
   if [ ! -z "$VELA_JOBS" ]; then
     args+=(-j$VELA_JOBS)
   fi
-  if ! (cd "$VELA_ROOT" && ./build.sh "${args[@]}" 1>/dev/null); then
+  local outdir=$ARTIFACTDIR/$(echo $config | sed "s/:/\//")
+  mkdir -p $outdir
+  if ! (cd "$VELA_ROOT" && ./build.sh "${args[@]}" 1>$outdir/build-stdout.log); then
+    echo "  build.sh failed; last 80 lines of stdout:"
+    tail -n 80 $outdir/build-stdout.log
     fail=1
   fi
   return $fail

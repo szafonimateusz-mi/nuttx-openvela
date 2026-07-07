@@ -22,3 +22,11 @@ CMake,sim:bthcisock
 
 # error: missing argument to '-Wstack-usage='
 -sim:asan
+
+# Vendored libc++ operator""s is constexpr but basic_string has no
+# constexpr destructor; rejected by the host GCC (libs/libxx build error).
+-Linux,sim:binder
+
+# Vendored lame codec sources not provisioned in the OpenVela workspace
+# (CMake: "Cannot find source file: ...libmp3lame/bitstream.c").
+-Linux,sim:alsa
