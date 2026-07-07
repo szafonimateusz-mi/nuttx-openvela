@@ -6,15 +6,6 @@ on:
     branches: [dev, main]
   workflow_dispatch:
     inputs:
-      suite:
-        description: OpenVela CI suite to run.
-        required: true
-        default: full
-        type: choice
-        options:
-          - quick
-          - full
-          - ntfc
       max-targets:
         description: Maximum targets per testlist. Use 0 for all targets.
         required: true
@@ -31,33 +22,41 @@ permissions:
   packages: read
 
 jobs:
-  quick:
-    if: ${{ github.event_name != 'workflow_dispatch' || inputs.suite == 'quick' }}
-    uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
-    with:
-      image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
-      ci-assets-repository: szafonimateusz-mi/public-actions
-      ci-assets-ref: trunk
-      manifest-branch: dev
-      repo-path: nuttx
-      testlist: /opt/openvela-ci/testlists/quick.dat
-      max-targets: "1"
-      jobs: "4"
-      artifact-name: openvela-ci-quick
-
-  full:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'full' }}
+  build:
     strategy:
       fail-fast: false
       matrix:
-        include:
-          - name: arm
-            testlist: /opt/openvela-ci/testlists/openvela-nuttx-arm.dat
-          - name: arm64
-            testlist: /opt/openvela-ci/testlists/openvela-nuttx-arm64.dat
-          - name: x86_64
-            testlist: /opt/openvela-ci/testlists/openvela-nuttx-x86_64.dat
-    name: full-${{ matrix.name }}
+        testlist:
+          - arm-01
+          - arm-02
+          - arm-03
+          - arm-04
+          - arm-05
+          - arm-06
+          - arm-07
+          - arm-08
+          - arm-09
+          - arm-10
+          - arm-11
+          - arm-12
+          - arm-13
+          - arm-14
+          - arm64-01
+          - risc-v-01
+          - risc-v-02
+          - risc-v-03
+          - risc-v-04
+          - risc-v-05
+          - risc-v-06
+          - sim-01
+          - sim-02
+          - sim-03
+          - x86_64-01
+          - other
+          - vela-arm-01
+          - vela-arm64-01
+          - vela-x86_64-01
+    name: ${{ matrix.testlist }}
     uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
     with:
       image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
@@ -65,13 +64,12 @@ jobs:
       ci-assets-ref: trunk
       manifest-branch: dev
       repo-path: nuttx
-      testlist: ${{ matrix.testlist }}
-      max-targets: ${{ inputs.max-targets }}
-      jobs: ${{ inputs.jobs }}
-      artifact-name: openvela-ci-full-${{ matrix.name }}
+      testlist: tools/ci/testlist/${{ matrix.testlist }}.dat
+      max-targets: ${{ github.event_name == 'workflow_dispatch' && inputs.max-targets || '0' }}
+      jobs: ${{ github.event_name == 'workflow_dispatch' && inputs.jobs || '4' }}
+      artifact-name: openvela-ci-${{ matrix.testlist }}
 
-  ntfc:
-    if: ${{ github.event_name == 'workflow_dispatch' && inputs.suite == 'ntfc' }}
+  citest:
     uses: szafonimateusz-mi/public-actions/.github/workflows/openvela-repo-ci.yml@trunk
     with:
       image: ghcr.io/szafonimateusz-mi/openvela-ci-linux:latest
@@ -79,9 +77,9 @@ jobs:
       ci-assets-ref: trunk
       manifest-branch: dev
       repo-path: nuttx
-      testlist: /opt/openvela-ci/testlists/openvela-nuttx-ntfc.dat
-      max-targets: ${{ inputs.max-targets }}
-      jobs: ${{ inputs.jobs }}
+      testlist: tools/ci/testlist/vela-citest.dat
+      max-targets: ${{ github.event_name == 'workflow_dispatch' && inputs.max-targets || '0' }}
+      jobs: ${{ github.event_name == 'workflow_dispatch' && inputs.jobs || '4' }}
       run-runtime-tests: true
       require-runtime-tests: true
-      artifact-name: openvela-ci-ntfc
+      artifact-name: openvela-ci-citest
