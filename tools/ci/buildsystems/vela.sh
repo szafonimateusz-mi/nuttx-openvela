@@ -100,9 +100,11 @@ function build {
   local outdir=$ARTIFACTDIR/$(echo $config | sed "s/:/\//")
   mkdir -p $outdir
   if ! (cd "$VELA_ROOT" && ./build.sh "${args[@]}" 1>$outdir/build-stdout.log); then
-    echo "  build.sh failed; last 80 lines of stdout:"
+    echo "  FAIL: ${target}; last 80 lines of build.sh stdout:"
     tail -n 80 $outdir/build-stdout.log
     fail=1
+  else
+    echo "  PASS: ${target}"
   fi
   return $fail
 }
