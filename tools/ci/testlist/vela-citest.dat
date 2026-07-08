@@ -1,0 +1,12 @@
+# SPDX-License-Identifier: Apache-2.0
+#
+# OpenVela/NuttX runtime-test group (Make flow; run with -R).
+# boards/sim/sim/sim/configs/citest carries NTFC config.yaml/session.json
+# and an executable run script.
+
+sim:citest
+
+# Candidates pending tree fixes (verified 2026-07-08 in the CI container):
+#   sabre-6quad:citest  - kernel panics at boot (armv7-a/arm_cpuidlestack.c:118)
+#   qemu-armv8a:citest  - kernel panics at boot (common/arm64_mmu.c:473)
+#   rv-virt:citest      - LIBCXX/LTP/CMOCKA apps-side build blockers
