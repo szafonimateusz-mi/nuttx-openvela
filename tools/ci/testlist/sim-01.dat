@@ -22,3 +22,12 @@ CMake,sim:bthcisock
 
 # error: missing argument to '-Wstack-usage='
 -sim:asan
+
+
+# Vendored lame codec sources not provisioned in the OpenVela workspace
+# (CMake: "Cannot find source file: ...libmp3lame/bitstream.c").
+-Linux,sim:alsa
+
+# The manifest's vendored libc++ is a clang-only fork; host-GCC sim builds
+# cannot compile it (the citest job prunes the vendored copy instead).
+-Linux,sim:binder

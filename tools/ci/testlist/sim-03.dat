@@ -64,3 +64,7 @@ CMake,sim:vncserver
 
 # undefined reference to `NXlink'
 -sim:toywasm
+
+# rustc not available in the openvela-ci-linux image
+-Linux,sim:rust
+
